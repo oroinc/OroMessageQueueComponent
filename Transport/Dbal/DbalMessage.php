@@ -1,15 +1,20 @@
 <?php
-namespace Oro\Component\MessageQueue\Transport\Null;
+namespace Oro\Component\MessageQueue\Transport\Dbal;
 
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 
-class NullMessage implements MessageInterface
+class DbalMessage implements MessageInterface
 {
+    /**
+     * @var int
+     */
+    private $id;
+
     /**
      * @var string
      */
     private $body;
-    
+
     /**
      * @var array
      */
@@ -25,16 +30,43 @@ class NullMessage implements MessageInterface
      */
     private $redelivered;
 
+    /**
+     * @var int
+     */
+    private $priority;
+
+    /**
+     * @var int
+     */
+    private $delay;
+
     public function __construct()
     {
         $this->properties = [];
         $this->headers = [];
-
         $this->redelivered = false;
+        $this->priority = 0;
+        $this->delay = null;
     }
-    
+
     /**
-     * {@inheritdoc}
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @param string $body
      */
     public function setBody($body)
     {
@@ -50,7 +82,7 @@ class NullMessage implements MessageInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param array $properties
      */
     public function setProperties(array $properties)
     {
@@ -74,7 +106,7 @@ class NullMessage implements MessageInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param array $headers
      */
     public function setHeaders(array $headers)
     {
@@ -98,7 +130,7 @@ class NullMessage implements MessageInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return boolean
      */
     public function isRedelivered()
     {
@@ -106,11 +138,45 @@ class NullMessage implements MessageInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param boolean $redelivered
      */
     public function setRedelivered($redelivered)
     {
         $this->redelivered = $redelivered;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
+
+    /**
+     * @param int $priority
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = $priority;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDelay()
+    {
+        return $this->delay;
+    }
+
+    /**
+     * Set delay in seconds
+     *
+     * @param int $delay
+     */
+    public function setDelay($delay)
+    {
+        $this->delay = $delay;
     }
 
     /**
