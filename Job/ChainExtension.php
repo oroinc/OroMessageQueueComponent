@@ -1,7 +1,10 @@
 <?php
 
-namespace Oro\Component\MessageQueue\Consumption;
+namespace Oro\Component\MessageQueue\Job;
 
+/**
+ * MQ job extension that contains all job extensions and process them.
+ */
 class ChainExtension implements ExtensionInterface
 {
     /** @var ExtensionInterface[] */
@@ -18,60 +21,50 @@ class ChainExtension implements ExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function onStart(Context $context)
+    public function onPreRunUnique(Job $job)
     {
         foreach ($this->extensions as $extension) {
-            $extension->onStart($context);
+            $extension->onPreRunUnique($job);
         }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function onBeforeReceive(Context $context)
+    public function onPostRunUnique(Job $job, $jobResult)
     {
         foreach ($this->extensions as $extension) {
-            $extension->onBeforeReceive($context);
+            $extension->onPostRunUnique($job, $jobResult);
         }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function onPreReceived(Context $context)
+    public function onCreateDelayed(Job $job, $createResult)
     {
         foreach ($this->extensions as $extension) {
-            $extension->onPreReceived($context);
+            $extension->onCreateDelayed($job, $createResult);
         }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function onPostReceived(Context $context)
+    public function onPreRunDelayed(Job $job)
     {
         foreach ($this->extensions as $extension) {
-            $extension->onPostReceived($context);
+            $extension->onPreRunDelayed($job);
         }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function onIdle(Context $context)
+    public function onPostRunDelayed(Job $job, $jobResult)
     {
         foreach ($this->extensions as $extension) {
-            $extension->onIdle($context);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onInterrupted(Context $context)
-    {
-        foreach ($this->extensions as $extension) {
-            $extension->onInterrupted($context);
+            $extension->onPostRunDelayed($job, $jobResult);
         }
     }
 }
